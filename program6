@@ -1,0 +1,58 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.linear_model import LogisticRegression
+
+# Load and preprocess data
+df = pd.read_csv("/content/sample_data/healthcare-diabetes.csv")
+df.drop(columns='Id', inplace=True, errors='ignore')
+
+# Replace 0s with NaN and fill with median
+zero_cols = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
+df[zero_cols] = df[zero_cols].replace(0, np.nan).fillna(df[zero_cols].median())
+
+# Features and target
+X = df.drop('Outcome', axis=1)
+y = df['Outcome']
+
+# Standardize features
+scaler = StandardScaler()
+X = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Train Logistic Regression
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+
+# Predict
+y_pred_train = model.predict(X_train)
+y_pred_test = model.predict(X_test)
+
+# Evaluate
+print("Train Accuracy:", accuracy_score(y_train, y_pred_train))
+print("Test Accuracy :", accuracy_score(y_test, y_pred_test))
+
+print("\nClassification Report (Train):")
+print(classification_report(y_train, y_pred_train))
+
+print("Classification Report (Test):")
+print(classification_report(y_test, y_pred_test))
+
+# Plot confusion matrix (simplified)
+def plot_confusion(cm, title):
+    plt.figure(figsize=(4, 3))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
+
+plot_confusion(confusion_matrix(y_train, y_pred_train), "Train Confusion Matrix")
+plot_confusion(confusion_matrix(y_test, y_pred_test), "Test Confusion Matrix")
