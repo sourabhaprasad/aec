@@ -1,0 +1,28 @@
+import re
+import nltk
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+
+# Download required NLTK data files
+nltk.download('wordnet')       # For lemmatization
+nltk.download('omw-1.4')       # WordNet data
+nltk.download('stopwords')     # Optional: if you want to remove stopwords
+
+# Initialize the stemmer and lemmatizer
+stemmer = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
+
+# Sample input text
+text = "The striped bats were hanging on their feet and ate best fruits"
+
+# Extract lowercase words using regex
+words = re.findall(r'\b[a-z]+\b', text.lower())
+
+# Print header
+print("Word\t\tStemmed\t\tLemmatized")
+print("-" * 40)
+
+# Apply stemming and lemmatization
+for word in words:
+    stemmed = stemmer.stem(word)
+    lemmatized = lemmatizer.lemmatize(word)
+    print(f"{word:<10}\t{stemmed:<10}\t{lemmatized}")
