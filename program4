@@ -1,0 +1,59 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+
+# Load dataset
+df = pd.read_csv("/content/healthcare-diabetes.csv")  # Update path if necessary
+
+# Basic dataset info
+print("Shape:", df.shape)
+print("\nMissing values:\n", df.isnull().sum())
+print("\nDuplicate rows:", df.duplicated().sum())
+
+# Drop unnecessary column if exists
+if 'Id' in df.columns:
+    df.drop(columns='Id', inplace=True)
+
+# Show first few rows and statistics
+print(df.head())
+print(df.describe().T)
+print(df.info())
+
+# Plot histograms for all columns
+df.hist(figsize=(15, 10), bins=20)
+plt.suptitle("Feature Distributions", fontsize=16)
+plt.tight_layout()
+plt.show()
+
+# Correlation heatmap
+plt.figure(figsize=(10, 6))
+sns.heatmap(df.corr(), annot=True)
+plt.title("Correlation Heatmap")
+plt.show()
+
+# Countplot: Pregnancies vs Outcome
+plt.figure(figsize=(10, 6))
+sns.countplot(x='Pregnancies', hue='Outcome', data=df)
+plt.title("Pregnancies vs Outcome")
+plt.show()
+
+# Selected scatter plot pairs
+pairs = [
+    ("Age", "Glucose"),
+    ("Age", "BMI"),
+    ("BloodPressure", "BMI"),
+    ("Pregnancies", "Glucose"),
+    ("Insulin", "Glucose"),
+    ("DiabetesPedigreeFunction", "Glucose")
+]
+
+# Scatter plots by Outcome
+for x, y in pairs:
+    plt.figure(figsize=(8, 5))
+    sns.scatterplot(data=df, x=x, y=y, hue='Outcome', alpha=0.7)
+    plt.title(f"{x} vs {y} by Outcome")
+    plt.tight_layout()
+    plt.show()
