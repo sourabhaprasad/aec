@@ -1,0 +1,27 @@
+import re
+from collections import Counter
+from nltk.corpus import stopwords
+import nltk
+
+# Download stopwords
+nltk.download('stopwords')
+
+def tokenize_and_count_frequency(text):
+    # Convert to lowercase and tokenize using regex (words only)
+    words = re.findall(r'\b[a-z]+\b', text.lower())
+    # Remove stopwords
+    stop_words = set(stopwords.words('english'))
+    filtered_words = [word for word in words if word not in stop_words]
+     # Count frequencies
+    return Counter(filtered_words)
+
+# Sample text
+sample_text = "This is a sample text. It is used for testing the NLTK word frequency counting functionality."
+
+# Count word frequency
+word_freq = tokenize_and_count_frequency(sample_text)
+
+# Display results
+print("Word Frequencies:")
+for word, freq in word_freq.items():
+    print(f"{word}: {freq}")
